@@ -1,0 +1,20 @@
+//
+// Created by swj on 18-7-25.
+//
+
+#ifndef NIZK_BILIGROUP_H
+#define NIZK_BILIGROUP_H
+
+#include <pbc.h>
+
+class BiliGroup{
+public:
+    mpz_t p;
+    pairing_t pairing;
+    element_t g1, g2, h;
+public:
+    BiliGroup(uint n);
+    ~BiliGroup() = default;
+};
+
+#endif //NIZK_BILIGROUP_H

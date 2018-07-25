@@ -1,0 +1,1 @@
+/usr/bin/g++  -g   CMakeFiles/NIZK.dir/main.cpp.o CMakeFiles/NIZK.dir/DSC.cpp.o CMakeFiles/NIZK.dir/biligroup.cpp.o  -o NIZK  -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lpbc -lpbc 
