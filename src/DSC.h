@@ -7,26 +7,18 @@
 
 #include <pbc.h>
 #include "biligroup.h"
-/*
-class Account{
-private:
-    mpz_class secretKey[2];
-    mpz_class publicKey[2];
-public:
-    Account();
-    ~Account() = default;
 
-    inline mpz_class* getPublicKey(){return publicKey;}
+#define RANGE 1024
 
-};
-*/
 class DSC {
-private:
-    BiliGroup *group;
-    element_t sigma[1024], T[1024];
 public:
-    DSC(uint n);
-    ~DSC(){delete group;}
+    BiliGroup *group;
+    element_t vk;
+    element_t sigma[RANGE], T[RANGE];
+public:
+    DSC();
+    ~DSC();
+
 };
 
 #endif

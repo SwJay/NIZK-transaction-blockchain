@@ -9,12 +9,11 @@
 
 class BiliGroup{
 public:
-    mpz_t p;
     pairing_t pairing;
-    element_t g1, g2, h;
+    element_t g1, g2, gt, h;
 public:
-    BiliGroup(uint n);
-    ~BiliGroup() = default;
+    BiliGroup();
+    ~BiliGroup();
 };
 
 #endif //NIZK_BILIGROUP_H

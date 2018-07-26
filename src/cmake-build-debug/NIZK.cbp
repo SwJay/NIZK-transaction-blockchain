@@ -92,6 +92,12 @@
 		<Unit filename="/home/swj/Codes/C++/NIZK/DSC.h">
 			<Option target="NIZK"/>
 		</Unit>
+		<Unit filename="/home/swj/Codes/C++/NIZK/account.cpp">
+			<Option target="NIZK"/>
+		</Unit>
+		<Unit filename="/home/swj/Codes/C++/NIZK/account.h">
+			<Option target="NIZK"/>
+		</Unit>
 		<Unit filename="/home/swj/Codes/C++/NIZK/biligroup.cpp">
 			<Option target="NIZK"/>
 		</Unit>
@@ -99,6 +105,12 @@
 			<Option target="NIZK"/>
 		</Unit>
 		<Unit filename="/home/swj/Codes/C++/NIZK/main.cpp">
+			<Option target="NIZK"/>
+		</Unit>
+		<Unit filename="/home/swj/Codes/C++/NIZK/verifier.cpp">
+			<Option target="NIZK"/>
+		</Unit>
+		<Unit filename="/home/swj/Codes/C++/NIZK/verifier.h">
 			<Option target="NIZK"/>
 		</Unit>
 		<Unit filename="/home/swj/Codes/C++/NIZK/CMakeLists.txt">

@@ -9,6 +9,8 @@
 /home/swj/Codes/C++/NIZK/DSC.cpp
 DSC.h
 /home/swj/Codes/C++/NIZK/DSC.h
+iostream
+-
 
 /home/swj/Codes/C++/NIZK/DSC.h
 pbc.h
@@ -19,7 +21,7 @@ biligroup.h
 /home/swj/Codes/C++/NIZK/biligroup.cpp
 biligroup.h
 /home/swj/Codes/C++/NIZK/biligroup.h
-stdio.h
+ctime
 -
 
 /home/swj/Codes/C++/NIZK/biligroup.h

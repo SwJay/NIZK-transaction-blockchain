@@ -9,8 +9,8 @@ set(LINK_DIR /usr/local/lib)
 
 include_directories(${INC_DIR1} ${INC_DIR2})
 link_directories(${LINK_DIR})
-link_libraries(pbc)
+link_libraries(pbc gmp)
 
-add_executable(NIZK main.cpp DSC.cpp DSC.h biligroup.cpp biligroup.h)
+add_executable(NIZK main.cpp DSC.cpp DSC.h biligroup.cpp biligroup.h account.cpp account.h verifier.cpp verifier.h)
 
 target_link_libraries(NIZK pbc)

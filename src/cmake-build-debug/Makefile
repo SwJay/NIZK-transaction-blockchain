@@ -150,6 +150,33 @@ DSC.cpp.s:
 	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/DSC.cpp.s
 .PHONY : DSC.cpp.s
 
+account.o: account.cpp.o
+
+.PHONY : account.o
+
+# target to build an object file
+account.cpp.o:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/account.cpp.o
+.PHONY : account.cpp.o
+
+account.i: account.cpp.i
+
+.PHONY : account.i
+
+# target to preprocess a source file
+account.cpp.i:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/account.cpp.i
+.PHONY : account.cpp.i
+
+account.s: account.cpp.s
+
+.PHONY : account.s
+
+# target to generate assembly for a file
+account.cpp.s:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/account.cpp.s
+.PHONY : account.cpp.s
+
 biligroup.o: biligroup.cpp.o
 
 .PHONY : biligroup.o
@@ -204,6 +231,33 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+verifier.o: verifier.cpp.o
+
+.PHONY : verifier.o
+
+# target to build an object file
+verifier.cpp.o:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/verifier.cpp.o
+.PHONY : verifier.cpp.o
+
+verifier.i: verifier.cpp.i
+
+.PHONY : verifier.i
+
+# target to preprocess a source file
+verifier.cpp.i:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/verifier.cpp.i
+.PHONY : verifier.cpp.i
+
+verifier.s: verifier.cpp.s
+
+.PHONY : verifier.s
+
+# target to generate assembly for a file
+verifier.cpp.s:
+	$(MAKE) -f CMakeFiles/NIZK.dir/build.make CMakeFiles/NIZK.dir/verifier.cpp.s
+.PHONY : verifier.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -216,12 +270,18 @@ help:
 	@echo "... DSC.o"
 	@echo "... DSC.i"
 	@echo "... DSC.s"
+	@echo "... account.o"
+	@echo "... account.i"
+	@echo "... account.s"
 	@echo "... biligroup.o"
 	@echo "... biligroup.i"
 	@echo "... biligroup.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... verifier.o"
+	@echo "... verifier.i"
+	@echo "... verifier.s"
 .PHONY : help
 
 

@@ -5,8 +5,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/swj/Codes/C++/NIZK/DSC.cpp" "/home/swj/Codes/C++/NIZK/cmake-build-debug/CMakeFiles/NIZK.dir/DSC.cpp.o"
+  "/home/swj/Codes/C++/NIZK/account.cpp" "/home/swj/Codes/C++/NIZK/cmake-build-debug/CMakeFiles/NIZK.dir/account.cpp.o"
   "/home/swj/Codes/C++/NIZK/biligroup.cpp" "/home/swj/Codes/C++/NIZK/cmake-build-debug/CMakeFiles/NIZK.dir/biligroup.cpp.o"
   "/home/swj/Codes/C++/NIZK/main.cpp" "/home/swj/Codes/C++/NIZK/cmake-build-debug/CMakeFiles/NIZK.dir/main.cpp.o"
+  "/home/swj/Codes/C++/NIZK/verifier.cpp" "/home/swj/Codes/C++/NIZK/cmake-build-debug/CMakeFiles/NIZK.dir/verifier.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
