@@ -7,7 +7,7 @@
 
 /* DSC Ctor
  * get a bilinear group from a.param
- * TODO: generate from a given security paramaeter n
+ * TODO: generate from a given security parameter n
  */
 BiliGroup::BiliGroup() {
     FILE *file = fopen("a.param","r");

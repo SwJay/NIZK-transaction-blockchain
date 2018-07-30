@@ -7,6 +7,8 @@
 
 #include <pbc.h>
 #include "biligroup.h"
+#include "account.h"
+#include <vector>
 
 #define RANGE 1024
 

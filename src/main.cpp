@@ -10,7 +10,7 @@ int main() {
     Proof proof;
     Verifier verifier;
     Account A(dsc.group, 50), B(dsc.group, 0);
-    proof = A.transfer(B, 25);
+    proof = A.transfer(&dsc, B, 25);
     if(verifier.verify(proof))
 
     return 0;

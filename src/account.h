@@ -7,10 +7,8 @@
 
 #include <pbc.h>
 #include "biligroup.h"
-
-typedef struct _Proof{
-
-}Proof;
+#include "verifier.h"
+#include "DSC.h"
 
 class Account{
 private:
@@ -18,12 +16,15 @@ private:
     uint balance;
 public:
     element_t publicKey[2];
+
+private:
+    void encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3 );
+    void commit_redpond(DSC *dsc, Account B, uint amount, Cipher C1, Commitment *commiment, Response *response);
 public:
     Account(BiliGroup *group, const uint &init_balance);
     ~Account();
 
-    inline void addAmount(const uint &amount){balance += amount;}
-    Proof transfer(Account B, const uint &amount);
+    Proof transfer(DSC* ,Account, uint);
 };
 
 #endif //NIZK_ACCOUNT_H
