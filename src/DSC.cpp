@@ -54,3 +54,41 @@ DSC::~DSC() {
     delete group;
 }
 
+void DSC::randomOracle(unsigned char *value, Commitment *message) {
+    unsigned char *c;
+    element_t result, result0, result1, result_t0, result_t1;
+    int length;
+    element_init_G1(result,group->pairing);
+    element_init_G1(result0,group->pairing);
+    element_init_G1(result1,group->pairing);
+    element_init_GT(result_t0,group->pairing);
+    element_init_GT(result_t1,group->pairing);
+
+    element_mul(result0, message->R1, message->R2);
+    element_mul(result1, message->_R1, message->_R2);
+    element_mul(result, result0, result1);
+    element_random(result_t0);
+    for(int j =0; j < MAX_SPACE; j++){
+        element_mul(result_t1, message->a[j], message->_a[j]);
+        element_mul(result_t0, result_t0, result_t1);
+
+        element_mul(result1, message->V[j], message->_V[j]);
+        element_mul(result, result, result1);
+    }
+    element_mul(result0, message->D1, message->D2);
+    element_mul(result1, result, message->alpha);
+    element_mul(result, result0, result1);
+    element_pairing(result_t1, result, group->g2);
+    element_mul(result_t0, result_t1, result_t0);
+
+    length = element_length_in_bytes(result_t0);
+    c = new unsigned char(length);
+    element_to_bytes(c, result_t0);
+    crypto_hash_sha512_ref(value, c, (unsigned long long)length);
+
+    element_clear(result);
+    element_clear(result0);
+    element_clear(result1);
+    element_clear(result_t0);
+    element_clear(result_t1);
+}

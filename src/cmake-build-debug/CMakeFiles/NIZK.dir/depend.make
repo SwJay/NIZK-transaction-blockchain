@@ -3,7 +3,11 @@
 
 CMakeFiles/NIZK.dir/DSC.cpp.o: ../DSC.cpp
 CMakeFiles/NIZK.dir/DSC.cpp.o: ../DSC.h
+CMakeFiles/NIZK.dir/DSC.cpp.o: ../account.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: ../biligroup.h
+CMakeFiles/NIZK.dir/DSC.cpp.o: ../verifier.h
+CMakeFiles/NIZK.dir/DSC.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+CMakeFiles/NIZK.dir/DSC.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/gmp.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc_a1_param.h
@@ -21,6 +25,31 @@ CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc_pairing.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc_param.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc_random.h
 CMakeFiles/NIZK.dir/DSC.cpp.o: /usr/local/include/pbc/pbc_utils.h
+
+CMakeFiles/NIZK.dir/account.cpp.o: ../DSC.h
+CMakeFiles/NIZK.dir/account.cpp.o: ../account.cpp
+CMakeFiles/NIZK.dir/account.cpp.o: ../account.h
+CMakeFiles/NIZK.dir/account.cpp.o: ../biligroup.h
+CMakeFiles/NIZK.dir/account.cpp.o: ../verifier.h
+CMakeFiles/NIZK.dir/account.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+CMakeFiles/NIZK.dir/account.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/gmp.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_a1_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_a_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_curve.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_d_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_e_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_f_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_field.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_g_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_i_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_memory.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_mnt.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_pairing.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_param.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_random.h
+CMakeFiles/NIZK.dir/account.cpp.o: /usr/local/include/pbc/pbc_utils.h
 
 CMakeFiles/NIZK.dir/biligroup.cpp.o: ../biligroup.cpp
 CMakeFiles/NIZK.dir/biligroup.cpp.o: ../biligroup.h
@@ -43,8 +72,12 @@ CMakeFiles/NIZK.dir/biligroup.cpp.o: /usr/local/include/pbc/pbc_random.h
 CMakeFiles/NIZK.dir/biligroup.cpp.o: /usr/local/include/pbc/pbc_utils.h
 
 CMakeFiles/NIZK.dir/main.cpp.o: ../DSC.h
+CMakeFiles/NIZK.dir/main.cpp.o: ../account.h
 CMakeFiles/NIZK.dir/main.cpp.o: ../biligroup.h
 CMakeFiles/NIZK.dir/main.cpp.o: ../main.cpp
+CMakeFiles/NIZK.dir/main.cpp.o: ../verifier.h
+CMakeFiles/NIZK.dir/main.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+CMakeFiles/NIZK.dir/main.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/gmp.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc_a1_param.h
@@ -62,4 +95,29 @@ CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc_pairing.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc_param.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc_random.h
 CMakeFiles/NIZK.dir/main.cpp.o: /usr/local/include/pbc/pbc_utils.h
+
+CMakeFiles/NIZK.dir/verifier.cpp.o: ../DSC.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: ../account.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: ../biligroup.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: ../verifier.cpp
+CMakeFiles/NIZK.dir/verifier.cpp.o: ../verifier.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/gmp.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_a1_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_a_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_curve.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_d_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_e_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_f_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_field.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_g_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_i_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_memory.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_mnt.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_pairing.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_param.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_random.h
+CMakeFiles/NIZK.dir/verifier.cpp.o: /usr/local/include/pbc/pbc_utils.h
 

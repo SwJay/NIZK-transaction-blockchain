@@ -4,7 +4,36 @@
 CMakeFiles/NIZK.dir/DSC.cpp.o
  /home/swj/Codes/C++/NIZK/DSC.cpp
  /home/swj/Codes/C++/NIZK/DSC.h
+ /home/swj/Codes/C++/NIZK/account.h
  /home/swj/Codes/C++/NIZK/biligroup.h
+ /home/swj/Codes/C++/NIZK/verifier.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
+ /usr/local/include/gmp.h
+ /usr/local/include/pbc/pbc.h
+ /usr/local/include/pbc/pbc_a1_param.h
+ /usr/local/include/pbc/pbc_a_param.h
+ /usr/local/include/pbc/pbc_curve.h
+ /usr/local/include/pbc/pbc_d_param.h
+ /usr/local/include/pbc/pbc_e_param.h
+ /usr/local/include/pbc/pbc_f_param.h
+ /usr/local/include/pbc/pbc_field.h
+ /usr/local/include/pbc/pbc_g_param.h
+ /usr/local/include/pbc/pbc_i_param.h
+ /usr/local/include/pbc/pbc_memory.h
+ /usr/local/include/pbc/pbc_mnt.h
+ /usr/local/include/pbc/pbc_pairing.h
+ /usr/local/include/pbc/pbc_param.h
+ /usr/local/include/pbc/pbc_random.h
+ /usr/local/include/pbc/pbc_utils.h
+CMakeFiles/NIZK.dir/account.cpp.o
+ /home/swj/Codes/C++/NIZK/DSC.h
+ /home/swj/Codes/C++/NIZK/account.cpp
+ /home/swj/Codes/C++/NIZK/account.h
+ /home/swj/Codes/C++/NIZK/biligroup.h
+ /home/swj/Codes/C++/NIZK/verifier.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
  /usr/local/include/gmp.h
  /usr/local/include/pbc/pbc.h
  /usr/local/include/pbc/pbc_a1_param.h
@@ -44,8 +73,37 @@ CMakeFiles/NIZK.dir/biligroup.cpp.o
  /usr/local/include/pbc/pbc_utils.h
 CMakeFiles/NIZK.dir/main.cpp.o
  /home/swj/Codes/C++/NIZK/DSC.h
+ /home/swj/Codes/C++/NIZK/account.h
  /home/swj/Codes/C++/NIZK/biligroup.h
  /home/swj/Codes/C++/NIZK/main.cpp
+ /home/swj/Codes/C++/NIZK/verifier.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
+ /usr/local/include/gmp.h
+ /usr/local/include/pbc/pbc.h
+ /usr/local/include/pbc/pbc_a1_param.h
+ /usr/local/include/pbc/pbc_a_param.h
+ /usr/local/include/pbc/pbc_curve.h
+ /usr/local/include/pbc/pbc_d_param.h
+ /usr/local/include/pbc/pbc_e_param.h
+ /usr/local/include/pbc/pbc_f_param.h
+ /usr/local/include/pbc/pbc_field.h
+ /usr/local/include/pbc/pbc_g_param.h
+ /usr/local/include/pbc/pbc_i_param.h
+ /usr/local/include/pbc/pbc_memory.h
+ /usr/local/include/pbc/pbc_mnt.h
+ /usr/local/include/pbc/pbc_pairing.h
+ /usr/local/include/pbc/pbc_param.h
+ /usr/local/include/pbc/pbc_random.h
+ /usr/local/include/pbc/pbc_utils.h
+CMakeFiles/NIZK.dir/verifier.cpp.o
+ /home/swj/Codes/C++/NIZK/DSC.h
+ /home/swj/Codes/C++/NIZK/account.h
+ /home/swj/Codes/C++/NIZK/biligroup.h
+ /home/swj/Codes/C++/NIZK/verifier.cpp
+ /home/swj/Codes/C++/NIZK/verifier.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash.h
+ /home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64/crypto_hash_sha512.h
  /usr/local/include/gmp.h
  /usr/local/include/pbc/pbc.h
  /usr/local/include/pbc/pbc_a1_param.h

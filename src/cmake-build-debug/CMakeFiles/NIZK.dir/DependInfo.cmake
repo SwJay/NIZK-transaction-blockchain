@@ -16,6 +16,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include"
   "/usr/local/include/pbc"
+  "/home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64"
   )
 
 # Targets to which this target links.

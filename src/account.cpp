@@ -35,28 +35,38 @@ Account::~Account() {
  * core func
  * TODO: ta encryption adjust
  * */
-Proof Account::transfer(DSC *dsc, Account B, uint amount) {
-    Cipher C1(dsc->group->pairing), C2(dsc->group->pairing), C3(dsc->group->pairing);
-    Commitment commitment;
+Proof *Account::transfer(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3){
 
+    element_t y1, y2;
+    element_t challenge;
+    auto *commitment = new Commitment(dsc->group->pairing);
+    auto *response = new Response(dsc->group->pairing);
+
+    // init randomness
+    element_init_Zr(y1,dsc->group->pairing);
+    element_init_Zr(y2,dsc->group->pairing);
+    element_init_Zr(challenge,dsc->group->pairing);
 
     /* generate cipher of t, ta */
-    encrypt(dsc, B, amount, &C1, &C2, &C3);
+    encrypt(dsc, B, amount, C1, C2, C3, y1, y2);
 
     /* generate proof */
+    commit_redpond(dsc, B, amount, C1, commitment, response, challenge, y1, y2);
 
+    auto *proof = new Proof(commitment, response, challenge, dsc->group->pairing);
 
+    element_clear(y1);
+    element_clear(y2);
+    element_clear(challenge);
 
+    return proof;
 }
 
-void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3 ) {
+void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2) {
     element_t c1, c2, c3;
-    element_t y1, y2;
     element_t t, ta;
 
     // init
-    element_init_Zr(y1,dsc->group->pairing);
-    element_init_Zr(y2,dsc->group->pairing);
     element_init_G1(c1,dsc->group->pairing);
     element_init_G1(c2,dsc->group->pairing);
     element_init_G1(c3,dsc->group->pairing);
@@ -88,23 +98,29 @@ void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, 
     element_pow_zn(c2, B.publicKey[1], y2);
     element_pow3_zn(c3, dsc->group->g1, y1, dsc->group->g1, y2, dsc->group->h, t);
     C3->set(c1, c2, c3);
+
+    // clear
+    element_clear(c1);
+    element_clear(c2);
+    element_clear(c3);
+    element_clear(t);
+    element_clear(ta);
 }
 
-void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher C1, Commitment *commiment, Response *response) {
+void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2) {
     element_t r1, r2, l, k;
     element_t v[MAX_SPACE], _v[MAX_SPACE], s[MAX_SPACE],w[MAX_SPACE], q[MAX_SPACE], m[MAX_SPACE];
-    element_t tmp_mul, tmp_inv;
+    element_t tmp_mul, tmp_neg, tmp_add;
+    element_t tmp_pow;
     int tj[MAX_SPACE], _tj[MAX_SPACE], tmp_t0, tmp_t1;
+    element_t tmp_c0, tmp_c1;
+    unsigned char *value = new unsigned char(crypto_hash_BYTES);
 
     //init
     element_init_Zr(r1,dsc->group->pairing);
     element_init_Zr(r2,dsc->group->pairing);
     element_init_Zr(l,dsc->group->pairing);
     element_init_Zr(k,dsc->group->pairing);
-    element_init_G1(commiment->R1,dsc->group->pairing);
-    element_init_G1(commiment->R2,dsc->group->pairing);
-    element_init_G1(commiment->_R1,dsc->group->pairing);
-    element_init_G1(commiment->_R2,dsc->group->pairing);
     for(int j = 0; j < MAX_SPACE; j++){
         element_init_Zr(v[j],dsc->group->pairing);
         element_init_Zr(_v[j],dsc->group->pairing);
@@ -112,35 +128,36 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher C1, Commit
         element_init_Zr(w[j],dsc->group->pairing);
         element_init_Zr(q[j],dsc->group->pairing);
         element_init_Zr(m[j],dsc->group->pairing);
-        element_init_G1(commiment->V[j],dsc->group->pairing);
-        element_init_G1(commiment->_V[j],dsc->group->pairing);
-        element_init_GT(commiment->a[j],dsc->group->pairing);
-        element_init_GT(commiment->_a[j],dsc->group->pairing);
     }
-    element_init_G1(commiment->D1,dsc->group->pairing);
-    element_init_G1(commiment->D2,dsc->group->pairing);
     element_init_Zr(tmp_mul,dsc->group->pairing);
-    element_init_Zr(tmp_inv,dsc->group->pairing);
+    element_init_Zr(tmp_neg,dsc->group->pairing);
+    element_init_Zr(tmp_add,dsc->group->pairing);
+    element_init_G1(tmp_pow,dsc->group->pairing);
+    element_init_Zr(tmp_c0,dsc->group->pairing);
+    element_init_Zr(tmp_c1,dsc->group->pairing);
 
-    //random r1, r2, l, k
+    //random r1, r2, l, k, tmp_c0, z
     element_random(r1);
     element_random(r2);
     element_random(l);
     element_random(k);
+    element_random(tmp_c0);
+    element_random(response->tmp_z);
 
+    /* commit ******************************************/
     // compute Ri
-    element_pow_zn(commiment->R1, publicKey[0], r1);
-    element_pow_zn(commiment->R2, publicKey[1], r2);
-    element_pow_zn(commiment->_R1, B.publicKey[0], r1);
-    element_pow_zn(commiment->_R2, B.publicKey[1], r2);
+    element_pow_zn(commitment->R1, publicKey[0], r1);
+    element_pow_zn(commitment->R2, publicKey[1], r2);
+    element_pow_zn(commitment->_R1, B.publicKey[0], r1);
+    element_pow_zn(commitment->_R2, B.publicKey[1], r2);
 
     // for each tj, compute Vj, aj, D1, D2
     tmp_t0 = amount;
     tmp_t1 = balance - amount;
-    element_add(tmp_mul, r1, r2); // r1 + r2
-    element_invert(tmp_inv, tmp_mul); // -r1 -r2
-    element_pow_zn(commiment->D1, dsc->group->g1, tmp_mul);
-    element_pow3_zn(commiment->D2, C1.c1, l,C1.c2, k, dsc->group->g1, tmp_inv);
+    element_add(tmp_add, r1, r2); // r1 + r2
+    element_neg(tmp_neg, tmp_add); // -r1 -r2
+    element_pow_zn(commitment->D1, dsc->group->g1, tmp_add);
+    element_pow3_zn(commitment->D2, C1->c[0], l,C1->c[1], k, dsc->group->g1, tmp_neg);
     for(int j = 0; j < MAX_SPACE; j++){
         tj[j] = tmp_t0 % RANGE;
         _tj[j] = tmp_t1 % RANGE;
@@ -154,24 +171,73 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher C1, Commit
         element_random(q[j]);
         element_random(m[j]);
         // tj _tj
-        element_pow_zn(commiment->V[j], dsc->sigma[tj[j]], v[j]);
-        element_pow_zn(commiment->_V[j], dsc->sigma[_tj[j]], _v[j]);
+        element_pow_zn(commitment->V[j], dsc->sigma[tj[j]], v[j]);
+        element_pow_zn(commitment->_V[j], dsc->sigma[_tj[j]], _v[j]);
         // a
         element_mul(tmp_mul, s[j], v[j]);
-        element_invert(tmp_inv, tmp_mul);
-        element_pow2_zn(commiment->a[j], dsc->T[tj[j]], tmp_inv, dsc->group->gt, q[j]);
+        element_neg(tmp_neg, tmp_mul);
+        element_pow2_zn(commitment->a[j], dsc->T[tj[j]], tmp_neg, dsc->group->gt, q[j]);
         //_a
         element_mul(tmp_mul, w[j], _v[j]);
-        element_invert(tmp_inv, tmp_mul);
-        element_pow2_zn(commiment->a[j], dsc->T[_tj[j]], tmp_inv, dsc->group->gt, m[j]);
+        element_neg(tmp_neg, tmp_mul);
+        element_pow2_zn(commitment->a[j], dsc->T[_tj[j]], tmp_neg, dsc->group->gt, m[j]);
         // D1
         element_mul_si(tmp_mul, s[j], (long int)pow(RANGE, j));
-        element_pow_zn(tmp_mul, dsc->group->h, tmp_mul);
-        element_mul(commiment->D1, tmp_mul, commiment->D1);
+        element_pow_zn(tmp_pow, dsc->group->h, tmp_mul);
+        element_mul(commitment->D1, tmp_pow, commitment->D1);
         // D2
         element_mul_si(tmp_mul, w[j], (long int)pow(RANGE, j));
-        element_pow_zn(tmp_mul, dsc->group->h, tmp_mul);
-        element_mul(commiment->D2, tmp_mul, commiment->D2);
+        element_pow_zn(tmp_pow, dsc->group->h, tmp_mul);
+        element_mul(commitment->D2, tmp_pow, commitment->D2);
     }
+
+    // compute alpha
+    element_neg(tmp_neg, tmp_c0);
+    element_pow2_zn(commitment->alpha, dsc->group->g1, response->tmp_z, dsc->group->h, tmp_neg);
+
+    /* challenge ******************************************/
+    dsc->randomOracle(value, commitment);
+    element_from_hash(tmp_c1, (void *) value, crypto_hash_BYTES);
+    element_add(challenge, tmp_c0, tmp_c1);
+
+    /* respond ******************************************/
+    element_mul_zn(tmp_mul, challenge, y1); // z1
+    element_sub(response->z1, r1, tmp_mul);
+    element_mul_zn(tmp_mul, challenge, y2); // z2
+    element_sub(response->z2, r2, tmp_mul);
+    for(int j = 0; j < MAX_SPACE; j++){
+        element_mul_zn(tmp_mul, challenge, v[j]); // zv[j]
+        element_sub(response->zv[j], q[j], tmp_mul);
+        element_mul_zn(tmp_mul, challenge, _v[j]); // _zv[j]
+        element_sub(response->_zv[j], m[j], tmp_mul);
+        element_mul_si(tmp_mul, challenge, tj[j]); // zt[j]
+        element_sub(response->zv[j], q[j], tmp_mul);
+        element_mul_si(tmp_mul, challenge, _tj[j]); // _zv[j]
+        element_sub(response->_zv[j], m[j], tmp_mul);
+    }
+    element_div(tmp_mul, challenge, secreteKey[0]); // zl
+    element_sub(response->zl, l, tmp_mul);
+    element_div(tmp_mul, challenge, secreteKey[1]); // zk
+    element_sub(response->zl, k, tmp_mul);
+
+    // clear
+    element_clear(r1);
+    element_clear(r2);
+    element_clear(l);
+    element_clear(k);
+    for(int j = 0; j < MAX_SPACE; j++){
+        element_clear(v[j]);
+        element_clear(_v[j]);
+        element_clear(s[j]);
+        element_clear(w[j]);
+        element_clear(q[j]);
+        element_clear(m[j]);
+    }
+    element_clear(tmp_mul);
+    element_clear(tmp_neg);
+    element_clear(tmp_add);
+    element_clear(tmp_pow);
+    element_clear(tmp_c0);
+    element_clear(tmp_c1);
 }
 

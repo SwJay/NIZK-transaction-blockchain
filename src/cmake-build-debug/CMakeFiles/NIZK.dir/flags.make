@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include -I/usr/local/include/pbc 
+CXX_INCLUDES = -I/usr/local/include -I/usr/local/include/pbc -I/home/swj/Tools/nacl-20110221/build/swjT460p/include/amd64 
 

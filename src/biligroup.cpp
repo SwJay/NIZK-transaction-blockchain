@@ -12,15 +12,8 @@
 BiliGroup::BiliGroup() {
     FILE *file = fopen("a.param","r");
     char param[1024];
-    int reps = 30;
     size_t count;
     element_t w;
-
-    /*gmp_randinit_default(state); // random state init
-    gmp_randseed_ui(state, (unsigned)time(nullptr));
-    do{
-        mpz_urandomb(p, state, n); // generate random p
-    }while(!mpz_probab_prime_p(p, reps));*/
 
     count = fread(param, 1, 1024, file);
     if(!count)
