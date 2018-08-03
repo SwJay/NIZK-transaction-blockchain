@@ -61,7 +61,7 @@ _Commitment::~_Commitment() {
 }
 
 /* Response ****************************************************************/
-_Response::_Response(pairing_s *pairing) {
+_Response::_Response(pairing_t pairing) {
     // init
     element_init_Zr(z1, pairing);
     element_init_Zr(z2, pairing);
@@ -96,13 +96,13 @@ _Proof::~_Proof() {
     element_clear(challenge);
 }
 
-bool Verifier::verify(DSC *dsc, Proof *proof, Account A, Account B, Cipher *C1, Cipher *C2, Cipher *C3) {
+bool Verifier::verify(DSC *dsc, Proof *proof, Account *A, Account *B, Cipher *C1, Cipher *C2, Cipher *C3) {
     element_t c0, c1;
     element_t tmp_add, tmp_mul, tmp_neg;
     element_t tmp_pow0, tmp_pow1;
     element_t tmp_D1, tmp_D2;
     element_t tmp_gt0, tmp_gt1;
-    unsigned char *value = new unsigned char(crypto_hash_BYTES);
+    unsigned char *value = (unsigned char*)pbc_malloc(crypto_hash_BYTES);
     int eq0, eq1, eq2, eq3, eq4, eq5;
     bool flag = true;
 
@@ -120,7 +120,7 @@ bool Verifier::verify(DSC *dsc, Proof *proof, Account A, Account B, Cipher *C1, 
 
     // generate challenge
     dsc->randomOracle(value, proof->commitment);
-    element_from_hash(c1, (void *) value, 64);
+    element_from_hash(c1, (void *) value, crypto_hash_BYTES);
     element_sub(c0, proof->challenge, c1);
 
     // init tmp_D1
@@ -130,14 +130,21 @@ bool Verifier::verify(DSC *dsc, Proof *proof, Account A, Account B, Cipher *C1, 
     element_pow3_zn(tmp_D2, C1->c[2], proof->challenge, C1->c[0], proof->response->zl, C1->c[1], proof->response->zk);
     element_div(tmp_D2, tmp_D2, tmp_D1);
 
+/*    element_div(tmp_pow0, C1->c[2], C2->c[2]);
+    element_pow_zn(tmp_pow0, tmp_pow0, proof->challenge);
+    element_neg(tmp_neg, tmp_add);
+    element_pow3_zn(tmp_D2, C1->c[0], proof->response->zl, C1->c[1], proof->response->zk, dsc->group->g1, tmp_neg);
+    element_mul(tmp_D2, tmp_pow0, tmp_D2);*/
+//    int i = element_cmp(tmp_D1, tmp_D2);
+
     // check
-    element_pow2_zn(tmp_pow0, C2->c[0], proof->challenge, A.publicKey[0], proof->response->z1); // R1
+    element_pow2_zn(tmp_pow0, C2->c[0], proof->challenge, A->publicKey[0], proof->response->z1); // R1
     eq0 = element_cmp(tmp_pow0, proof->commitment->R1);
-    element_pow2_zn(tmp_pow0, C2->c[1], proof->challenge, A.publicKey[1], proof->response->z2); // R2
+    element_pow2_zn(tmp_pow0, C2->c[1], proof->challenge, A->publicKey[1], proof->response->z2); // R2
     eq1 = element_cmp(tmp_pow0, proof->commitment->R2);
-    element_pow2_zn(tmp_pow0, C3->c[0], proof->challenge, B.publicKey[0], proof->response->z1); // _R1
+    element_pow2_zn(tmp_pow0, C3->c[0], proof->challenge, B->publicKey[0], proof->response->z1); // _R1
     eq2 = element_cmp(tmp_pow0, proof->commitment->_R1);
-    element_pow2_zn(tmp_pow0, C3->c[1], proof->challenge, B.publicKey[1], proof->response->z2); // _R2
+    element_pow2_zn(tmp_pow0, C3->c[1], proof->challenge, B->publicKey[1], proof->response->z2); // _R2
     eq3 = element_cmp(tmp_pow0, proof->commitment->_R2);
     if(eq0 || eq1 || eq2 || eq3)
         flag = false;
@@ -146,8 +153,8 @@ bool Verifier::verify(DSC *dsc, Proof *proof, Account A, Account B, Cipher *C1, 
         element_pow_zn(tmp_pow0, dsc->group->h, tmp_mul);
         element_mul(tmp_D1, tmp_pow0, tmp_D1);
         element_mul_si(tmp_mul, proof->response->_zt[j], (long int)pow(RANGE, j)); // D2
-        element_pow_zn(tmp_pow0, dsc->group->h, tmp_mul);
-        element_mul(tmp_D2, tmp_pow0, tmp_D2);
+        element_pow_zn(tmp_pow1, dsc->group->h, tmp_mul);
+        element_mul(tmp_D2, tmp_pow1, tmp_D2);
 
         element_pairing(tmp_gt0, proof->commitment->V[j], dsc->vk); // aj
         element_neg(tmp_neg, proof->response->zt[j]);

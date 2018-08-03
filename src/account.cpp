@@ -19,8 +19,8 @@ Account::Account(BiliGroup *group, const uint &init_balance) {
 
     element_random(secreteKey[0]);
     element_random(secreteKey[1]);
-    element_pow_zn(publicKey[0], secreteKey[0], group->g1);
-    element_pow_zn(publicKey[1], secreteKey[1], group->g1);
+    element_pow_zn(publicKey[0], group->g1, secreteKey[0]);
+    element_pow_zn(publicKey[1], group->g1, secreteKey[1]);
     balance = init_balance;
 }
 
@@ -35,8 +35,7 @@ Account::~Account() {
  * core func
  * TODO: ta encryption adjust
  * */
-Proof *Account::transfer(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3){
-
+Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3){
     element_t y1, y2;
     element_t challenge;
     auto *commitment = new Commitment(dsc->group->pairing);
@@ -51,8 +50,7 @@ Proof *Account::transfer(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C
     encrypt(dsc, B, amount, C1, C2, C3, y1, y2);
 
     /* generate proof */
-    commit_redpond(dsc, B, amount, C1, commitment, response, challenge, y1, y2);
-
+    commit_respond(dsc, B, amount, C1, C2, commitment, response, challenge, y1, y2);
     auto *proof = new Proof(commitment, response, challenge, dsc->group->pairing);
 
     element_clear(y1);
@@ -62,7 +60,7 @@ Proof *Account::transfer(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C
     return proof;
 }
 
-void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2) {
+void Account::encrypt(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2) {
     element_t c1, c2, c3;
     element_t t, ta;
 
@@ -87,6 +85,8 @@ void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, 
     element_pow3_zn(c3, dsc->group->g1, y1, dsc->group->g1, y2, dsc->group->h, ta);
     C1->set(c1, c2, c3);
 
+/*    element_random(y1);
+    element_random(y2);*/
     //cipher text of t using pkA
     element_pow_zn(c1, publicKey[0], y1);
     element_pow_zn(c2, publicKey[1], y2);
@@ -94,8 +94,8 @@ void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, 
     C2->set(c1, c2, c3);
 
     //cipher text of t using pkB
-    element_pow_zn(c1, B.publicKey[0], y1);
-    element_pow_zn(c2, B.publicKey[1], y2);
+    element_pow_zn(c1, B->publicKey[0], y1);
+    element_pow_zn(c2, B->publicKey[1], y2);
     element_pow3_zn(c3, dsc->group->g1, y1, dsc->group->g1, y2, dsc->group->h, t);
     C3->set(c1, c2, c3);
 
@@ -107,14 +107,14 @@ void Account::encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, 
     element_clear(ta);
 }
 
-void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2) {
+void Account::commit_respond(DSC *dsc, Account *B, uint amount, Cipher *C1,Cipher *C2, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2) {
     element_t r1, r2, l, k;
     element_t v[MAX_SPACE], _v[MAX_SPACE], s[MAX_SPACE],w[MAX_SPACE], q[MAX_SPACE], m[MAX_SPACE];
-    element_t tmp_mul, tmp_neg, tmp_add;
-    element_t tmp_pow;
+    element_t tmp_mul, tmp_neg, tmp_add, tmp_inv;
+    element_t tmp_pow0, tmp_pow1;
     int tj[MAX_SPACE], _tj[MAX_SPACE], tmp_t0, tmp_t1;
     element_t tmp_c0, tmp_c1;
-    unsigned char *value = new unsigned char(crypto_hash_BYTES);
+    unsigned char *value = (unsigned char*)pbc_malloc(crypto_hash_BYTES);
 
     //init
     element_init_Zr(r1,dsc->group->pairing);
@@ -132,7 +132,9 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commi
     element_init_Zr(tmp_mul,dsc->group->pairing);
     element_init_Zr(tmp_neg,dsc->group->pairing);
     element_init_Zr(tmp_add,dsc->group->pairing);
-    element_init_G1(tmp_pow,dsc->group->pairing);
+    element_init_Zr(tmp_inv,dsc->group->pairing);
+    element_init_G1(tmp_pow0,dsc->group->pairing);
+    element_init_G1(tmp_pow1,dsc->group->pairing);
     element_init_Zr(tmp_c0,dsc->group->pairing);
     element_init_Zr(tmp_c1,dsc->group->pairing);
 
@@ -148,16 +150,17 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commi
     // compute Ri
     element_pow_zn(commitment->R1, publicKey[0], r1);
     element_pow_zn(commitment->R2, publicKey[1], r2);
-    element_pow_zn(commitment->_R1, B.publicKey[0], r1);
-    element_pow_zn(commitment->_R2, B.publicKey[1], r2);
+    element_pow_zn(commitment->_R1, B->publicKey[0], r1);
+    element_pow_zn(commitment->_R2, B->publicKey[1], r2);
 
     // for each tj, compute Vj, aj, D1, D2
     tmp_t0 = amount;
     tmp_t1 = balance - amount;
     element_add(tmp_add, r1, r2); // r1 + r2
     element_neg(tmp_neg, tmp_add); // -r1 -r2
-    element_pow_zn(commitment->D1, dsc->group->g1, tmp_add);
-    element_pow3_zn(commitment->D2, C1->c[0], l,C1->c[1], k, dsc->group->g1, tmp_neg);
+    element_pow_zn(commitment->D1, dsc->group->g1, tmp_add); // D1
+    element_pow3_zn(commitment->D2, C1->c[0], l, C1->c[1], k, dsc->group->g1, tmp_neg); // D2
+
     for(int j = 0; j < MAX_SPACE; j++){
         tj[j] = tmp_t0 % RANGE;
         _tj[j] = tmp_t1 % RANGE;
@@ -183,12 +186,12 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commi
         element_pow2_zn(commitment->a[j], dsc->T[_tj[j]], tmp_neg, dsc->group->gt, m[j]);
         // D1
         element_mul_si(tmp_mul, s[j], (long int)pow(RANGE, j));
-        element_pow_zn(tmp_pow, dsc->group->h, tmp_mul);
-        element_mul(commitment->D1, tmp_pow, commitment->D1);
+        element_pow_zn(tmp_pow0, dsc->group->h, tmp_mul);
+        element_mul(commitment->D1, tmp_pow0, commitment->D1);
         // D2
         element_mul_si(tmp_mul, w[j], (long int)pow(RANGE, j));
-        element_pow_zn(tmp_pow, dsc->group->h, tmp_mul);
-        element_mul(commitment->D2, tmp_pow, commitment->D2);
+        element_pow_zn(tmp_pow1, dsc->group->h, tmp_mul);
+        element_mul(commitment->D2, tmp_pow1, commitment->D2);
     }
 
     // compute alpha
@@ -201,24 +204,30 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commi
     element_add(challenge, tmp_c0, tmp_c1);
 
     /* respond ******************************************/
-    element_mul_zn(tmp_mul, challenge, y1); // z1
+    element_mul(tmp_mul, challenge, y1); // z1
     element_sub(response->z1, r1, tmp_mul);
-    element_mul_zn(tmp_mul, challenge, y2); // z2
+    element_mul(tmp_mul, challenge, y2); // z2
     element_sub(response->z2, r2, tmp_mul);
-    for(int j = 0; j < MAX_SPACE; j++){
-        element_mul_zn(tmp_mul, challenge, v[j]); // zv[j]
+
+    for(int j = 0; j < MAX_SPACE; j++) {
+        element_mul(tmp_mul, challenge, v[j]); // zv[j]
         element_sub(response->zv[j], q[j], tmp_mul);
-        element_mul_zn(tmp_mul, challenge, _v[j]); // _zv[j]
+        element_mul(tmp_mul, challenge, _v[j]); // _zv[j]
         element_sub(response->_zv[j], m[j], tmp_mul);
         element_mul_si(tmp_mul, challenge, tj[j]); // zt[j]
-        element_sub(response->zv[j], q[j], tmp_mul);
-        element_mul_si(tmp_mul, challenge, _tj[j]); // _zv[j]
-        element_sub(response->_zv[j], m[j], tmp_mul);
+        element_sub(response->zt[j], s[j], tmp_mul);
+        element_mul_si(tmp_mul, challenge, _tj[j]); // _zt[j]
+        element_sub(response->_zt[j], w[j], tmp_mul);
     }
     element_div(tmp_mul, challenge, secreteKey[0]); // zl
     element_sub(response->zl, l, tmp_mul);
+/*  element_invert(tmp_inv, secreteKey[0]);
+    element_mul(tmp_mul, challenge, tmp_inv);
+    element_sub(tmp_add, l, tmp_mul);
+    int check = element_cmp(tmp_add, response->zl);*/
+
     element_div(tmp_mul, challenge, secreteKey[1]); // zk
-    element_sub(response->zl, k, tmp_mul);
+    element_sub(response->zk, k, tmp_mul);
 
     // clear
     element_clear(r1);
@@ -233,10 +242,12 @@ void Account::commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commi
         element_clear(q[j]);
         element_clear(m[j]);
     }
+    element_clear(tmp_pow1);
+    element_clear(tmp_pow0);
     element_clear(tmp_mul);
     element_clear(tmp_neg);
     element_clear(tmp_add);
-    element_clear(tmp_pow);
+    element_clear(tmp_inv);
     element_clear(tmp_c0);
     element_clear(tmp_c1);
 }

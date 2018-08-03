@@ -12,7 +12,7 @@
 /* Cipher ******************************************************/
 typedef struct _Cipher{
 public:
-    element_t c[MAX_SPACE];
+    element_t c[3];
 
     explicit _Cipher(pairing_t pairing);
     ~_Cipher();
@@ -67,7 +67,7 @@ public:
     Verifier() = default;
     ~Verifier() = default;
 
-    bool verify(DSC *dsc, Proof *proof, Account A, Account B, Cipher *C1, Cipher *C2, Cipher *C3);
+    bool verify(DSC *dsc, Proof *proof, Account *A, Account *B, Cipher *C1, Cipher *C2, Cipher *C3);
 };
 
 #endif //NIZK_VERIFIER_H

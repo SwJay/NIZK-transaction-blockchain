@@ -18,13 +18,13 @@ public:
     element_t publicKey[2];
 
 private:
-    void encrypt(DSC *dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2);
-    void commit_redpond(DSC *dsc, Account B, uint amount, Cipher *C1, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2);
+    void encrypt(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2);
+    void commit_respond(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2);
 public:
     Account(BiliGroup *group, const uint &init_balance);
     ~Account();
 
-    Proof *transfer(DSC* dsc, Account B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3);
+    Proof *transfer(DSC* dsc, Account* B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3);
 };
 
 #endif //NIZK_ACCOUNT_H

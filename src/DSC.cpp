@@ -55,7 +55,6 @@ DSC::~DSC() {
 }
 
 void DSC::randomOracle(unsigned char *value, Commitment *message) {
-    unsigned char *c;
     element_t result, result0, result1, result_t0, result_t1;
     int length;
     element_init_G1(result,group->pairing);
@@ -67,7 +66,7 @@ void DSC::randomOracle(unsigned char *value, Commitment *message) {
     element_mul(result0, message->R1, message->R2);
     element_mul(result1, message->_R1, message->_R2);
     element_mul(result, result0, result1);
-    element_random(result_t0);
+    element_set(result_t0, group->gt);
     for(int j =0; j < MAX_SPACE; j++){
         element_mul(result_t1, message->a[j], message->_a[j]);
         element_mul(result_t0, result_t0, result_t1);
@@ -82,7 +81,7 @@ void DSC::randomOracle(unsigned char *value, Commitment *message) {
     element_mul(result_t0, result_t1, result_t0);
 
     length = element_length_in_bytes(result_t0);
-    c = new unsigned char(length);
+    unsigned char *c = (unsigned char *)pbc_malloc(length);
     element_to_bytes(c, result_t0);
     crypto_hash_sha512_ref(value, c, (unsigned long long)length);
 
@@ -91,4 +90,5 @@ void DSC::randomOracle(unsigned char *value, Commitment *message) {
     element_clear(result1);
     element_clear(result_t0);
     element_clear(result_t1);
+    pbc_free(c);
 }

@@ -13,12 +13,20 @@ int main() {
     Proof *proof;
     Verifier verifier;
     uint amount;
-    Account A(dsc->group, 100000), B(dsc->group, 100000);
+    Account *A = new Account(dsc->group, 43124);
+    Account *B = new Account(dsc->group, 50342);
 
-    amount = 5000;
-    proof = A.transfer(dsc, B, amount, C1, C2, C3);
+    amount = 43124;
+    proof = A->transfer(dsc, B, amount, C1, C2, C3);
     if(verifier.verify(dsc, proof, A, B, C1, C2, C3))
         cout << "hello" << endl; //dsc->transfer(A, B, proof->commitment);
 
+    delete C1;
+    delete C2;
+    delete C3;
+    delete proof;
+    delete A;
+    delete B;
+    delete dsc;
     return 0;
 }
