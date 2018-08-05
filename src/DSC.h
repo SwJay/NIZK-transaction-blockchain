@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include "crypto_hash.h"
+#include <map>
 
 #define RANGE 1024
 
@@ -20,12 +21,13 @@ public:
     BiliGroup *group;
     element_t vk;
     element_t sigma[RANGE], T[RANGE];
+
 public:
     DSC();
     ~DSC();
 
     void randomOracle(unsigned char *value, Commitment *message);
-    //void transfer(Account A,Account B, uint amount);
+    void transfer(Account *A,Account *B, Cipher* Ca, Cipher *Cb);
 };
 
 #endif

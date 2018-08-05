@@ -11,20 +11,50 @@ using namespace std;
 /* Account Ctor
  * generate sk, pk
  */
-Account::Account(BiliGroup *group, const uint &init_balance) {
-    element_init_Zr(secreteKey[0], group->pairing);
-    element_init_Zr(secreteKey[1], group->pairing);
-    element_init_G1(publicKey[0], group->pairing);
-    element_init_G1(publicKey[1], group->pairing);
+Account::Account(DSC *dsc, const uint &init_balance) {
+    element_t c1, c2, c3;
+    element_t ta;
+    element_t y1, y2;
+
+    cipherBalance = new Cipher(dsc->group->pairing);
+    balance = init_balance;
+
+    element_init_Zr(secreteKey[0], dsc->group->pairing);
+    element_init_Zr(secreteKey[1], dsc->group->pairing);
+    element_init_G1(publicKey[0], dsc->group->pairing);
+    element_init_G1(publicKey[1], dsc->group->pairing);
+    element_init_G1(c1,dsc->group->pairing);
+    element_init_G1(c2,dsc->group->pairing);
+    element_init_G1(c3,dsc->group->pairing);
+    element_init_Zr(ta,dsc->group->pairing);
+    element_init_Zr(y1,dsc->group->pairing);
+    element_init_Zr(y2,dsc->group->pairing);
 
     element_random(secreteKey[0]);
     element_random(secreteKey[1]);
-    element_pow_zn(publicKey[0], group->g1, secreteKey[0]);
-    element_pow_zn(publicKey[1], group->g1, secreteKey[1]);
-    balance = init_balance;
+    element_pow_zn(publicKey[0], dsc->group->g1, secreteKey[0]);
+    element_pow_zn(publicKey[1], dsc->group->g1, secreteKey[1]);
+
+    //random y1, y2
+    element_random(y1);
+    element_random(y2);
+
+    element_set_si(ta, init_balance);
+    element_pow_zn(c1, publicKey[0], y1);
+    element_pow_zn(c2, publicKey[1], y2);
+    element_pow3_zn(c3, dsc->group->g1, y1, dsc->group->g1, y2, dsc->group->h, ta);
+    cipherBalance->set(c1, c2, c3);
+
+    element_clear(c1);
+    element_clear(c2);
+    element_clear(c3);
+    element_clear(ta);
+    element_clear(y1);
+    element_clear(y2);
 }
 
 Account::~Account() {
+    delete cipherBalance;
     element_clear(secreteKey[0]);
     element_clear(secreteKey[1]);
     element_clear(publicKey[0]);
@@ -35,7 +65,7 @@ Account::~Account() {
  * core func
  * TODO: ta encryption adjust
  * */
-Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3){
+Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C2, Cipher *C3){
     element_t y1, y2;
     element_t challenge;
     auto *commitment = new Commitment(dsc->group->pairing);
@@ -47,10 +77,10 @@ Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *
     element_init_Zr(challenge,dsc->group->pairing);
 
     /* generate cipher of t, ta */
-    encrypt(dsc, B, amount, C1, C2, C3, y1, y2);
+    encrypt(dsc, B, amount, C2, C3, y1, y2);
 
     /* generate proof */
-    commit_respond(dsc, B, amount, C1, C2, commitment, response, challenge, y1, y2);
+    commit_respond(dsc, B, amount, commitment, response, challenge, y1, y2);
     auto *proof = new Proof(commitment, response, challenge, dsc->group->pairing);
 
     element_clear(y1);
@@ -60,7 +90,7 @@ Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *
     return proof;
 }
 
-void Account::encrypt(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2, Cipher *C3, element_t y1, element_t y2) {
+void Account::encrypt(DSC *dsc, Account *B, uint amount, Cipher *C2, Cipher *C3, element_t y1, element_t y2) {
     element_t c1, c2, c3;
     element_t t, ta;
 
@@ -75,18 +105,9 @@ void Account::encrypt(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2,
     element_random(y1);
     element_random(y2);
 
-    //convert t, ta
+    //convert t
     element_set_si(t, amount);
-    element_set_si(ta, balance);
 
-    //cipher text of ta
-    element_pow_zn(c1, publicKey[0], y1);
-    element_pow_zn(c2, publicKey[1], y2);
-    element_pow3_zn(c3, dsc->group->g1, y1, dsc->group->g1, y2, dsc->group->h, ta);
-    C1->set(c1, c2, c3);
-
-/*    element_random(y1);
-    element_random(y2);*/
     //cipher text of t using pkA
     element_pow_zn(c1, publicKey[0], y1);
     element_pow_zn(c2, publicKey[1], y2);
@@ -107,7 +128,7 @@ void Account::encrypt(DSC *dsc, Account *B, uint amount, Cipher *C1, Cipher *C2,
     element_clear(ta);
 }
 
-void Account::commit_respond(DSC *dsc, Account *B, uint amount, Cipher *C1,Cipher *C2, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2) {
+void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2) {
     element_t r1, r2, l, k;
     element_t v[MAX_SPACE], _v[MAX_SPACE], s[MAX_SPACE],w[MAX_SPACE], q[MAX_SPACE], m[MAX_SPACE];
     element_t tmp_mul, tmp_neg, tmp_add, tmp_inv;
@@ -159,7 +180,7 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Cipher *C1,Ciphe
     element_add(tmp_add, r1, r2); // r1 + r2
     element_neg(tmp_neg, tmp_add); // -r1 -r2
     element_pow_zn(commitment->D1, dsc->group->g1, tmp_add); // D1
-    element_pow3_zn(commitment->D2, C1->c[0], l, C1->c[1], k, dsc->group->g1, tmp_neg); // D2
+    element_pow3_zn(commitment->D2, cipherBalance->c[0], l, cipherBalance->c[1], k, dsc->group->g1, tmp_neg); // D2
 
     for(int j = 0; j < MAX_SPACE; j++){
         tj[j] = tmp_t0 % RANGE;
@@ -250,5 +271,31 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Cipher *C1,Ciphe
     element_clear(tmp_inv);
     element_clear(tmp_c0);
     element_clear(tmp_c1);
+}
+
+int Account::getBalance(BiliGroup *biligroup) {
+    element_t tmp_inv0, tmp_inv1;
+    element_t tmp_pow;
+    element_t result_t;
+    long result_i;
+
+    element_init_Zr(tmp_inv0, biligroup->pairing);
+    element_init_Zr(tmp_inv1, biligroup->pairing);
+    element_init_G1(tmp_pow, biligroup->pairing);
+    element_init_G1(result_t, biligroup->pairing);
+
+    element_invert(tmp_inv0, secreteKey[0]);
+    element_invert(tmp_inv1, secreteKey[1]);
+    element_pow2_zn(result_t, cipherBalance->c[0], tmp_inv0, cipherBalance->c[1], tmp_inv1);
+    element_div(result_t, cipherBalance->c[2], result_t);
+    element_dlog_brute_force(result_t, biligroup->h, result_t);
+    result_i = element_to_si(result_t);
+
+    element_clear(tmp_inv0);
+    element_clear(tmp_inv1);
+    element_clear(tmp_pow);
+    element_clear(result_t);
+
+    return (int)result_i;
 }
 

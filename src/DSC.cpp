@@ -92,3 +92,12 @@ void DSC::randomOracle(unsigned char *value, Commitment *message) {
     element_clear(result_t1);
     pbc_free(c);
 }
+
+void DSC::transfer(Account *A, Account *B, Cipher *Ca, Cipher *Cb) {
+    element_div(A->cipherBalance->c[0], A->cipherBalance->c[0], Ca->c[0]);
+    element_div(A->cipherBalance->c[1], A->cipherBalance->c[1], Ca->c[1]);
+    element_div(A->cipherBalance->c[2], A->cipherBalance->c[2], Ca->c[2]);
+    element_mul(B->cipherBalance->c[0], B->cipherBalance->c[0], Cb->c[0]);
+    element_mul(B->cipherBalance->c[1], B->cipherBalance->c[1], Cb->c[1]);
+    element_mul(B->cipherBalance->c[2], B->cipherBalance->c[2], Cb->c[2]);
+}
