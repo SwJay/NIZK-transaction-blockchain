@@ -11,10 +11,13 @@ using namespace std;
 /* Account Ctor
  * generate sk, pk
  */
-Account::Account(DSC *dsc, const uint &init_balance) {
+Account::Account(DSC *dsc, const int &init_balance) {
     element_t c1, c2, c3;
     element_t ta;
     element_t y1, y2;
+
+    if(init_balance < 0)
+        throw "ERROR: Initial balance is set negative.";
 
     cipherBalance = new Cipher(dsc->group->pairing);
 
@@ -64,11 +67,14 @@ Account::~Account() {
  * core func
  * TODO: ta encryption adjust
  * */
-Proof *Account::transfer(DSC *dsc, Account *B, uint amount, Cipher *C2, Cipher *C3){
+Proof *Account::transfer(DSC *dsc, Account *B, const int &amount, Cipher *C2, Cipher *C3){
     element_t y1, y2;
     element_t challenge;
     auto *commitment = new Commitment(dsc->group->pairing);
     auto *response = new Response(dsc->group->pairing);
+
+    if(amount < 0)
+        throw "ERROR: transaction amount is set negative.";
 
     // init randomness
     element_init_Zr(y1,dsc->group->pairing);
@@ -176,6 +182,8 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
     // for each tj, compute Vj, aj, D1, D2
     tmp_t0 = amount;
     tmp_t1 = getBalance(dsc->group) - amount;
+    if(tmp_t1 < 0)
+        throw "ERROR: Account has no sufficient funds.";
     element_add(tmp_add, r1, r2); // r1 + r2
     element_neg(tmp_neg, tmp_add); // -r1 -r2
     element_pow_zn(commitment->D1, dsc->group->g1, tmp_add); // D1

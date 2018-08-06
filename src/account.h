@@ -25,10 +25,10 @@ private:
     void encrypt(DSC *dsc, Account *B, uint amount, Cipher *C2, Cipher *C3, element_t y1, element_t y2);
     void commit_respond(DSC *dsc, Account *B, uint amount, Commitment *commitment, Response *response, element_t challenge, element_t y1, element_t y2);
 public:
-    Account(DSC *dsc, const uint &init_balance);
+    Account(DSC *dsc, const int &init_balance);
     ~Account();
 
-    Proof *transfer(DSC* dsc, Account* B, uint amount,  Cipher *C2, Cipher *C3);
+    Proof *transfer(DSC* dsc, Account* B, const int &amount,  Cipher *C2, Cipher *C3);
     int getBalance(BiliGroup *biligroup);
 };
 
