@@ -17,7 +17,6 @@
 class Account{
 private:
     element_t secreteKey[2];
-    uint balance;
 public:
     element_t publicKey[2];
     Cipher *cipherBalance;

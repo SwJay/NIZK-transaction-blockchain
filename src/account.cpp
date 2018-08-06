@@ -17,7 +17,6 @@ Account::Account(DSC *dsc, const uint &init_balance) {
     element_t y1, y2;
 
     cipherBalance = new Cipher(dsc->group->pairing);
-    balance = init_balance;
 
     element_init_Zr(secreteKey[0], dsc->group->pairing);
     element_init_Zr(secreteKey[1], dsc->group->pairing);
@@ -176,7 +175,7 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
 
     // for each tj, compute Vj, aj, D1, D2
     tmp_t0 = amount;
-    tmp_t1 = balance - amount;
+    tmp_t1 = getBalance(dsc->group) - amount;
     element_add(tmp_add, r1, r2); // r1 + r2
     element_neg(tmp_neg, tmp_add); // -r1 -r2
     element_pow_zn(commitment->D1, dsc->group->g1, tmp_add); // D1
@@ -275,26 +274,30 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
 
 int Account::getBalance(BiliGroup *biligroup) {
     element_t tmp_inv0, tmp_inv1;
-    element_t tmp_pow;
-    element_t result_t;
+    element_t result_t, result_z;
     long result_i;
 
     element_init_Zr(tmp_inv0, biligroup->pairing);
     element_init_Zr(tmp_inv1, biligroup->pairing);
-    element_init_G1(tmp_pow, biligroup->pairing);
     element_init_G1(result_t, biligroup->pairing);
+    element_init_Zr(result_z, biligroup->pairing);
 
     element_invert(tmp_inv0, secreteKey[0]);
     element_invert(tmp_inv1, secreteKey[1]);
     element_pow2_zn(result_t, cipherBalance->c[0], tmp_inv0, cipherBalance->c[1], tmp_inv1);
     element_div(result_t, cipherBalance->c[2], result_t);
-    element_dlog_brute_force(result_t, biligroup->h, result_t);
-    result_i = element_to_si(result_t);
+
+    if(element_is1(result_t))
+        result_i = 0;
+    else{
+        element_dlog_brute_force(result_z, biligroup->h, result_t);
+        result_i = element_to_si(result_z);
+    }
 
     element_clear(tmp_inv0);
     element_clear(tmp_inv1);
-    element_clear(tmp_pow);
     element_clear(result_t);
+    element_clear(result_z);
 
     return (int)result_i;
 }

@@ -12,12 +12,15 @@ int main() {
     Proof *proof;
     Verifier verifier;
     uint amount;
-    Account *A = new Account(dsc, 43124);
-    Account *B = new Account(dsc, 50342);
-    amount = 4125;
+    Account *A = new Account(dsc, 100000);
+    Account *B = new Account(dsc, 50000);
+    amount = 100000;
     proof = A->transfer(dsc, B, amount, Ca, Cb);
     if(verifier.verify(dsc, proof, A, B, A->cipherBalance, Ca, Cb))
         dsc->transfer(A, B, Ca, Cb);
+
+    cout << "A: " << A->getBalance(dsc->group) << endl;
+    cout << "B: " << B->getBalance(dsc->group) << endl;
 
     delete Ca;
     delete Cb;
