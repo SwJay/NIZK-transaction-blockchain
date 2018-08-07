@@ -12,11 +12,16 @@ int main() {
     Proof *proof;
     Verifier verifier;
     uint amount;
-    // a single transaction
+    /**
+     * A single transaction (available amount ranges from 0 ~ 2^30-1 )
+     * error catch:
+     * 1. initialize account with negative balance
+     * 2. transfer amount is set negative
+     * */
     try{
-        Account *A = new Account(dsc, 100000);
+        Account *A = new Account(dsc, 10000);
         Account *B = new Account(dsc, 50000);
-        amount = 10000;
+        amount = 100000;
 
         proof = A->transfer(dsc, B, amount, Ca, Cb);
 

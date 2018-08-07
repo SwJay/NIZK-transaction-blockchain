@@ -1,0 +1,92 @@
+{ # 4354 Bytes
+    "transactions": [
+        {
+            "transaction_id": "",					# 32
+            "signature": "",						# 101
+            "actions": [
+            	"account": { # 256
+            		"public_key1": "",
+            		"public_key2": ""
+            	},
+            	"name": "transaction", # 20
+            	"data": {
+            		"to": { # 256
+            			"public_key1": "",
+            			"public_key2": ""
+            		},
+            		"quantity_from": { # 384
+            			"verify_key1": "",
+            			"verify_key2": "",
+            			"cipher_quantity": ""
+            		},
+            		"quantity_to": { # 384
+            			"verify_key1": "",
+            			"verify_key2": "",
+            			"cipher_quantity": ""
+            		},
+            		"proof": {
+            			"commitment": { # 2432
+            				"R1": "",
+            				"R2": "",
+            				"_R1": "",
+            				"_R2": "",
+            				"V": {
+            					"V0": "",
+            					"V1": "",
+            					"V2": ""
+            				},
+            				"_V": {
+            					"_V0": "",
+            					"_V1": "",
+            					"_V2": ""
+            				},
+            				"D1": "",
+            				"D2": "",
+            				"a": {
+            					"a0": "",
+            					"a1": "",
+            					"a2": ""
+            				},
+            				"_a": {
+            					"_a0": "",
+            					"_a1": "",
+            					"_a2": ""
+            				},
+            				"alpha": ""
+            			},
+            			"challenge": "", # 20
+            			"response": { # 340
+            				"z1": "",
+            				"z2": "",
+            				"zv": {
+            					"zv0": "",
+            					"zv1": "",
+            					"zv2": "",
+            				},
+            				"_zv": {
+            					"_zv0": "",
+            					"_zv1": "",
+            					"_zv2": "",
+            				},
+            				"zt": {
+            					"zt0": "",
+            					"zt1": "",
+            					"zt2": "",
+            				},
+            				"_zt": {
+            					"_zt0": "",
+            					"_zt1": "",
+            					"_zt2": "",
+            				},
+            				"zl": "",
+            				"zk": "",
+            				"_z": ""
+            			}
+            		}
+            		"memo": "" # 100
+            	},
+            	"hex_data": "" # 29
+            ]
+        }
+    ]
+}

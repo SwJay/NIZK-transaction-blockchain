@@ -138,7 +138,8 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
     element_t v[MAX_SPACE], _v[MAX_SPACE], s[MAX_SPACE],w[MAX_SPACE], q[MAX_SPACE], m[MAX_SPACE];
     element_t tmp_mul, tmp_neg, tmp_add, tmp_inv;
     element_t tmp_pow0, tmp_pow1;
-    int tj[MAX_SPACE], _tj[MAX_SPACE], tmp_t0, tmp_t1;
+    int tj[MAX_SPACE], _tj[MAX_SPACE];
+    uint tmp_t0, tmp_t1;
     element_t tmp_c0, tmp_c1;
     unsigned char *value = (unsigned char*)pbc_malloc(crypto_hash_BYTES);
 
@@ -182,8 +183,6 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
     // for each tj, compute Vj, aj, D1, D2
     tmp_t0 = amount;
     tmp_t1 = getBalance(dsc->group) - amount;
-    if(tmp_t1 < 0)
-        throw "ERROR: Account has no sufficient funds.";
     element_add(tmp_add, r1, r2); // r1 + r2
     element_neg(tmp_neg, tmp_add); // -r1 -r2
     element_pow_zn(commitment->D1, dsc->group->g1, tmp_add); // D1
