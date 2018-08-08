@@ -20,6 +20,7 @@ Account::Account(DSC *dsc, const int &init_balance) {
         throw "ERROR: Initial balance is set negative.";
 
     cipherBalance = new Cipher(dsc->group->pairing);
+    balance = init_balance;
 
     element_init_Zr(secreteKey[0], dsc->group->pairing);
     element_init_Zr(secreteKey[1], dsc->group->pairing);
@@ -279,33 +280,43 @@ void Account::commit_respond(DSC *dsc, Account *B, uint amount, Commitment *comm
     element_clear(tmp_c1);
 }
 
-int Account::getBalance(BiliGroup *biligroup) {
+uint Account::getBalance(BiliGroup *biligroup) {
     element_t tmp_inv0, tmp_inv1;
     element_t result_t, result_z;
+    element_t verify_t, verify_z;
     long result_i;
 
     element_init_Zr(tmp_inv0, biligroup->pairing);
     element_init_Zr(tmp_inv1, biligroup->pairing);
     element_init_G1(result_t, biligroup->pairing);
     element_init_Zr(result_z, biligroup->pairing);
+    element_init_G1(verify_t, biligroup->pairing);
+    element_init_Zr(verify_z, biligroup->pairing);
 
     element_invert(tmp_inv0, secreteKey[0]);
     element_invert(tmp_inv1, secreteKey[1]);
     element_pow2_zn(result_t, cipherBalance->c[0], tmp_inv0, cipherBalance->c[1], tmp_inv1);
     element_div(result_t, cipherBalance->c[2], result_t);
 
-    if(element_is1(result_t))
+    element_set_si(verify_z, balance);
+    element_pow_zn(verify_t, biligroup->h, verify_z);
+
+    if(!element_cmp(verify_t, result_t))
+        result_i = balance;
+    else if(element_is1(result_t))
         result_i = 0;
     else{
         element_dlog_brute_force(result_z, biligroup->h, result_t);
         result_i = element_to_si(result_z);
     }
 
+    balance = (uint)result_i;
+
     element_clear(tmp_inv0);
     element_clear(tmp_inv1);
     element_clear(result_t);
     element_clear(result_z);
 
-    return (int)result_i;
+    return (uint)result_i;
 }
 

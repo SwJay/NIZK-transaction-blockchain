@@ -20,6 +20,7 @@ private:
 public:
     element_t publicKey[2];
     Cipher *cipherBalance;
+    uint balance;
 
 private:
     void encrypt(DSC *dsc, Account *B, uint amount, Cipher *C2, Cipher *C3, element_t y1, element_t y2);
@@ -29,7 +30,7 @@ public:
     ~Account();
 
     Proof *transfer(DSC* dsc, Account* B, const int &amount,  Cipher *C2, Cipher *C3);
-    int getBalance(BiliGroup *biligroup);
+    uint getBalance(BiliGroup *biligroup);
 };
 
 #endif //NIZK_ACCOUNT_H

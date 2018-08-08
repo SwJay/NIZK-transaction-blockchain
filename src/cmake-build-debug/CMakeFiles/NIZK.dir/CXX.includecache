@@ -65,6 +65,12 @@ account.h
 /home/swj/Codes/C++/NIZK/account.h
 verifier.h
 /home/swj/Codes/C++/NIZK/verifier.h
+random
+-
+ctime
+-
+sys/time.h
+-
 
 /home/swj/Codes/C++/NIZK/verifier.cpp
 verifier.h
